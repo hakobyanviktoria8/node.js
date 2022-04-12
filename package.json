@@ -1,0 +1,25 @@
+{
+  "name": "node.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "node 17.homeWork/hw17/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hakobyanviktoria8/node.js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hakobyanviktoria8/node.js/issues"
+  },
+  "homepage": "https://github.com/hakobyanviktoria8/node.js#readme",
+  "dependencies": {
+    "inquirer": "^8.2.2",
+    "random": "^3.0.6"
+  }
+}
