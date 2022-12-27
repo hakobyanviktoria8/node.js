@@ -6,10 +6,10 @@ function go() {
 }
 console.log("test")
 
-function some () {
-    console.log("Global ",this);
-}
-some()
+// function some () {
+//     console.log("Global ",this);
+// }
+// some()
 
 module.exports = {
     foo,
