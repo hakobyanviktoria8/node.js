@@ -1,6 +1,7 @@
 const fs = require("fs").promises
 const random = require("random")
 const createFunc = require("./createServer")
+const readFunc = require("./readInputTextWriteOutput")
 
 // new Promise(function(resolve, reject){
 //     const num = random.int(1,10)
@@ -34,4 +35,7 @@ const createFunc = require("./createServer")
 
 
 // read json file data, create server with host and port
-createFunc()
+// createFunc()
+
+// read input.txt file data and write same time output1 and output2 files
+readFunc()
