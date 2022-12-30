@@ -9,7 +9,16 @@ const network = os.networkInterfaces();
 
 // network['Wi-Fi'].forEach(item=> item.family==="IPv4" && console.log(item.address))
 
-fs.writeFile(`${generateFileName()}.txt`, os.cpus().length.toString(), function(err){
-    console.log(err?.message);
-})
+// fs.writeFile(`${generateFileName()}.txt`, os.cpus().length.toString(), function(err){
+//     console.log(err?.message);
+// })
 
+// read input.txt file text and write output.tx file
+
+fs.readFile("./input.txt", function(err, data){
+    let newText = data.toString().split(" ").join("-")
+
+    fs.writeFile("output.txt", newText, function(err){
+        console.log(err?.message);
+    })
+})
