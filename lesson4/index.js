@@ -2,6 +2,7 @@ const fs = require("fs").promises
 const random = require("random")
 const createFunc = require("./createServer")
 const readFunc = require("./readInputTextWriteOutput")
+const readFuncSub2 = require("./readInputTextWithAsyncAwait")
 
 // new Promise(function(resolve, reject){
 //     const num = random.int(1,10)
@@ -38,4 +39,10 @@ const readFunc = require("./readInputTextWriteOutput")
 // createFunc()
 
 // read input.txt file data and write same time output1 and output2 files
-readFunc()
+// readFunc()
+
+readFuncSub2().then(()=>{
+    console.log("Done!");
+}).catch((err)=> {
+    console.log(err.massage);
+})
