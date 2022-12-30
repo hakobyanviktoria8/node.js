@@ -15,10 +15,19 @@ const network = os.networkInterfaces();
 
 // read input.txt file text and write output.tx file
 
-fs.readFile("./input.txt", function(err, data){
-    let newText = data.toString().split(" ").join("-")
+// fs.readFile("./input.txt", function(err, data){
+//     let newText = data.toString().split(" ").join("-")
 
-    fs.writeFile("output.txt", newText, function(err){
+//     fs.writeFile("output.txt", newText, function(err){
+//         console.log(err?.message);
+//     })
+// })
+
+
+fs.writeFile(
+    `${os.platform()}.txt`, 
+    `Hello new life ${new Date().getDate()}`, 
+    function(err){
         console.log(err?.message);
-    })
+
 })
