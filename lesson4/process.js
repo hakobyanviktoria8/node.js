@@ -19,3 +19,6 @@ server.listen(config?.port, config?.host)
 process.nextTick(()=>{
     console.log("nextTick")
 });
+
+// process
+console.log(process.version)
