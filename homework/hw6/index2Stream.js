@@ -1,18 +1,29 @@
 const fs = require("fs")
-const {Transform} = require("stream")
 
-const readableStream = fs.createReadStream("./input.txt", {
-    encoding:"utf-8"
+const readableStream = fs.createReadStream("./output1111.txt")
+const writeData = fs.createWriteStream("./output.txt")
+
+readableStream.on("data", (chunk)=> {
+    writeData.write(chunk.toString().replace(/\_/gm, ""))
 })
 
-const transFormData = new Transform({
-    transform(chunk, encoding, callback){
-        console.log(11111, chunk.toString());
-        this.push(chunk.toString().replace(/\,/gm,"_"))
-        callback()
-    }
+fs.unlink("./output1111.txt", err => {
+    err && console.log(err.message);
 })
+        
+// const fs = require("fs")
+// const {Transform} = require("stream")
 
-const writeData = fs.createWriteStream("./output1111.txt")
+// const readableStream = fs.createReadStream("./output1111.txt")
+// const writeData = fs.createWriteStream("./output.txt")  
 
-readableStream.pipe(transFormData).pipe(writeData)
+// const transformData = new Transform({
+//     transform(chunk, encoding, next){
+//         this.push(chunk.toString().replace(/\_/gm, " "))
+//         next()
+//     }
+// })
+
+// readableStream.pipe(transformData).pipe(writeData)
+
+// fs.unlinkSync("./output1111.txt")
