@@ -11,14 +11,35 @@
     <input type="text" placeholder="Write text here..." id="input" />
     <button onclick="myFunction()">Send</button>
     <p id="message"></p>
+    <div id="messagesData"></div>
   </body>
+  
   <script>
     let intup = document.querySelector("#input");
     const message = document.querySelector("#message");
+    const messagesData = document.querySelector("#messagesData");
 
     function myFunction() {
       console.log("intup value", intup.value);
       message.innerHTML = "Send message!";
+      getMessages();
+    }
+
+    function addMessage(obj) {
+      messagesData.innerHTML += `<p>
+          ${obj.name} ${obj.message}
+        </p>`;
+    }
+
+    function getMessages() {
+      fetch("http://localhost:3003/messages")
+        .then((res) => res.json())
+        .then((data) => {
+          data.forEach((el) => {
+            addMessage(el);
+          });
+        })
+        .catch((err) => console.log(err));
     }
   </script>
 </html>
