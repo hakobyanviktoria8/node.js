@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 
 const messages = [
   { name: "Viki", message: "Hello new day" },
@@ -21,6 +23,10 @@ app.post("/messages", (req, res) => {
   res.sendStatus(200);
 });
 
-const server = app.listen(3003, () => {
+io.on("connection", (socket) => {
+  console.log("user connected");
+});
+
+const server = http.listen(3003, () => {
   console.log("server is runing", server.address().port); //server is runing 3003
 });

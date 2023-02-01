@@ -26,11 +26,13 @@
     <div id="messagesData"></div>
   </body>
 
-  <script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" charset="utf-8">
     let intup = document.querySelector("#input");
     let messageText = document.querySelector("#messageText");
     const message = document.querySelector("#message");
     const messagesData = document.querySelector("#messagesData");
+    const socket = io();
 
     function myFunction() {
       // console.log("intup value", intup.value);
