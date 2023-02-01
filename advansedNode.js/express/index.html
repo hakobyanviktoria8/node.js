@@ -43,6 +43,8 @@
       getMessages();
     }
 
+    socket.on("message", addMessage);
+
     function addMessage(obj) {
       messagesData.insertAdjacentHTML(
         "afterend",
