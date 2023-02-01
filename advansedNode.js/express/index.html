@@ -8,27 +8,55 @@
   </head>
   <body>
     <h1>Send message</h1>
-    <input type="text" placeholder="Write text here..." id="input" />
+    <input
+      type="text"
+      placeholder="Write text here..."
+      id="input"
+    /><br /><br />
+    <textarea
+      name=""
+      id="messageText"
+      cols="30"
+      rows="10"
+      placeholder="Write text here..."
+    ></textarea
+    ><br /><br />
     <button onclick="myFunction()">Send</button>
     <p id="message"></p>
     <div id="messagesData"></div>
   </body>
-  
+
   <script>
     let intup = document.querySelector("#input");
+    let messageText = document.querySelector("#messageText");
     const message = document.querySelector("#message");
     const messagesData = document.querySelector("#messagesData");
 
     function myFunction() {
-      console.log("intup value", intup.value);
-      message.innerHTML = "Send message!";
+      // console.log("intup value", intup.value);
+      // message.innerHTML = "Send message!";
+      const messObj = { name: intup.value, message: messageText.value };
+      postMessages(messObj);
+      console.log(1111111, messObj);
       getMessages();
     }
 
     function addMessage(obj) {
-      messagesData.innerHTML += `<p>
+      messagesData.insertAdjacentHTML(
+        "afterend",
+        `<p>
           ${obj.name} ${obj.message}
-        </p>`;
+        </p>`
+      );
+
+      // messagesData.append(
+      //   `<p>
+      //     ${obj.name} ${obj.message}
+      //   </p>`
+      // );
+      // messagesData.innerHTML += `<p>
+      //   ${obj.name} ${obj.message}
+      // </p>`;
     }
 
     function getMessages() {
@@ -38,6 +66,21 @@
           data.forEach((el) => {
             addMessage(el);
           });
+        })
+        .catch((err) => console.log(err));
+    }
+
+    function postMessages(mess) {
+      fetch("http://localhost:3003/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mess),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
         })
         .catch((err) => console.log(err));
     }
