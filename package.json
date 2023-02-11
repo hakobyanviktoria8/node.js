@@ -6,7 +6,8 @@
   "scripts": {
     "run-dev": "cross-env port=3000 NODE_ENV=development node lesson4/process.js",
     "run-prod": "cross-env port=2-23 NODE_ENV=production node lesson4/process.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node express.js"
   },
   "repository": {
     "type": "git",
