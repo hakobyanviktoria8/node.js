@@ -1,16 +1,22 @@
 const fs = require("fs");
 const { EventEmitter } = require("events");
 
-const customEvent = new EventEmitter();
+const readable = fs.createReadStream("user.json");
+readable
+  .on("data", (chunk) => {
+    console.log(chunk.toString());
+  })
+  .emit("data", "hi");
 
-customEvent
-  .on("start", () => {
-    console.log("start 1");
-  })
-  .on("start", (n) => {
-    console.log("start 2", n);
-  })
-  .emit("start", 2);
+const customEvent = new EventEmitter();
+// customEvent
+//   .on("start", () => {
+//     console.log("start 1");
+//   })
+//   .on("start", (n) => {
+//     console.log("start 2", n);
+//   })
+//   .emit("start", 2);
 
 // var http = require("http");
 // http
