@@ -1,11 +1,9 @@
 const express = require("express");
 const http = require("http");
-const routesIndex = require("./routesIndex");
-const routerPosts = require("./routesPosts");
-
+const router = require("./router");
 const app = express();
 
-app.use(routesIndex);
-app.use(routerPosts);
+// routeri mech app hasaneli e
+router(app);
 
 http.createServer(app).listen(2023);
