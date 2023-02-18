@@ -2,14 +2,23 @@ const express = require("express");
 const app = express();
 const router = express.Router();
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const mime = require("mime-types");
 
 // req.body is undefined, we i body-parser
 // const bodyParser = require("body-parser");
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 // or express.encoded then json
-
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    // cb(null, file.originalname);  //repeat and remove old img
+    cb(null, `${Date.now()}.${mime.extension(file.mimetype)}`);
+  },
+});
+const upload = multer({ storage: storage });
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
