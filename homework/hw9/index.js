@@ -6,7 +6,7 @@ const app = express();
 const multer = require("multer");
 
 const randomName = () => {
-  return random.int(0, 1000000);
+  return random.int(100000, 1000000);
 };
 
 const storage = multer.diskStorage({
