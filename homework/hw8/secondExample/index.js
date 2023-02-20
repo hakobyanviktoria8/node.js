@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -36,7 +37,15 @@ router
     },
     (req, res) => {
       console.log(req.body);
-      res.send(`Met ${req.method}, ${new Date().toDateString()}`);
+
+      res
+        .status(201)
+        .json({
+          success: true,
+          data: {
+            name: req.body.name,
+          },
+        });
     }
   );
 
