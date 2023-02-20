@@ -11,6 +11,7 @@ const randomName = () => {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    // create file before cb call
     cb(null, "upload/");
   },
   filename: function (req, file, cb) {
@@ -25,6 +26,7 @@ app.post("/", upload.single("avatar"), (req, res, next) => {
   console.log("first midlwer", req.file);
   res.status(201).json({
     success: true,
+    data: req.file,
   });
 });
 
