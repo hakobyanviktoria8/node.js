@@ -15,8 +15,26 @@ console.log("OK__1", pathUserJson);
 
 router
   .route("/users")
-  .get((req, res) => {
-    res.send(`Get data`);
+  .get(async (req, res) => {
+    let users = Object.values(
+      JSON.parse(await fs.readFile(pathUserJson, "utf-8"))
+    );
+
+    if (req.query.name) {
+      // did'n work
+      // const regEx = `/${req.query.name}/gi`;
+      // users = users.filter(({ name }) => !!name.match(regEx));
+      users = users.filter((user) => user.name.includes(req.query.name));
+    }
+    if (req.query.limit) {
+      users = users.slice(0, +req.query.limit);
+    }
+
+    res.status(201).json({
+      success: true,
+      data: users,
+      message: "Return all users",
+    });
   })
   .post(upload.single("image"), async (req, res) => {
     const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
@@ -72,7 +90,7 @@ router
       res.status(201).json({
         success: true,
         data: user,
-        message: "User created",
+        message: "User data updated",
       });
     } else {
       res
