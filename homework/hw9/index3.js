@@ -20,7 +20,7 @@ router
   })
   .post(upload.single("image"), async (req, res) => {
     const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    // console.log("OK__2_post", req.body, req.file.originalname, users);
+    // console.log("OK__2_post",  users);
 
     if (users[req.body.username]) {
       await fs.unlink(path.join(__homeDir, req.file.path));
@@ -57,6 +57,27 @@ router
         data: null,
         message: "User not found",
       });
+    }
+  })
+  .put(upload.single("image"), async (req, res) => {
+    const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
+    const user = users[req.params.username];
+    // console.log("OK__3_post", users);
+
+    if (user) {
+      user.name = req.body.name;
+      await fs.unlink(path.join(`${__homeDir}/upload/`, user["image"]));
+      user.image = req.file.originalname;
+      await fs.writeFile(pathUserJson, JSON.stringify(users));
+      res.status(201).json({
+        success: true,
+        data: user,
+        message: "User created",
+      });
+    } else {
+      res
+        .status(401)
+        .json({ success: false, data: null, message: "User not found" });
     }
   })
   .delete(async (req, res) => {
