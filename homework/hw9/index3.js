@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const { upload } = require("./helpers");
 const fs = require("fs").promises;
+const cors = require("cors");
 
 const app = express();
 const router = express.Router();
@@ -10,12 +11,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 global.__homeDir = __dirname;
 
+app.use(cors());
+
 const pathUserJson = path.join(__homeDir, "./users.json");
 console.log("OK__1", pathUserJson);
 
 router
   .route("/users")
-  .get(async (req, res) => {
+  .get(cors(), async (req, res) => {
     let users = Object.values(
       JSON.parse(await fs.readFile(pathUserJson, "utf-8"))
     );
@@ -36,7 +39,7 @@ router
       message: "Return all users",
     });
   })
-  .post(upload.single("image"), async (req, res) => {
+  .post(cors(), upload.single("image"), async (req, res) => {
     const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
     // console.log("OK__2_post",  users);
 
