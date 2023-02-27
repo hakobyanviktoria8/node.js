@@ -52,7 +52,7 @@ router
       users[req.body.username] = {
         username: req.body.username,
         name: req.body.name,
-        image: req.body.image || req.file.originalname,
+        image: req.body.image,
       };
       await fs.writeFile(pathUserJson, JSON.stringify(users));
       res.status(201).json({
