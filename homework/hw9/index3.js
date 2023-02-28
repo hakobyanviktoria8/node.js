@@ -4,6 +4,7 @@ const path = require("path");
 const { upload } = require("./helpers");
 const fs = require("fs").promises;
 const cors = require("cors");
+const mongoose = require("mongoose");
 
 const app = express();
 const router = express.Router();
@@ -14,7 +15,7 @@ global.__homeDir = __dirname;
 app.use(cors());
 
 const pathUserJson = path.join(__homeDir, "./users.json");
-console.log("OK__1", pathUserJson);
+// console.log("OK__1", pathUserJson);
 
 router
   .route("/users")
@@ -113,6 +114,8 @@ router
 
 app.use(router);
 
-app.listen(3000, function () {
-  console.log("Ready");
-});
+mongoose.connect("mongodb://192.168.99.100/nodejs").then(() =>
+  app.listen(3000, function () {
+    console.log("Ready");
+  })
+);
