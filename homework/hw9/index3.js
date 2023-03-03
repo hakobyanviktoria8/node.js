@@ -11,11 +11,11 @@ const router = express.Router();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 global.__homeDir = __dirname;
+const User = require("./../../models/users");
 
 app.use(cors());
 
 const pathUserJson = path.join(__homeDir, "./users.json");
-// console.log("OK__1", pathUserJson);
 
 router
   .route("/users")
@@ -41,27 +41,44 @@ router
     });
   })
   .post(cors(), upload.single("image"), async (req, res) => {
-    const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    // console.log("OK__2_post",  users);
-
-    if (users[req.body.username]) {
-      await fs.unlink(path.join(__homeDir, req.file.path));
-      res
-        .status(401)
-        .json({ success: false, data: null, message: "User exists" });
-    } else {
-      users[req.body.username] = {
+    try {
+      const user = new User({
         username: req.body.username,
         name: req.body.name,
         image: req.body.image,
-      };
-      await fs.writeFile(pathUserJson, JSON.stringify(users));
+      });
+
+      await user.save();
       res.status(201).json({
         success: true,
-        data: users[req.body.username],
+        data: user,
         message: "User created",
       });
+    } catch (error) {
+      console.log(1111111, error);
     }
+
+    // const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
+    // // console.log("OK__2_post",  users);
+
+    // if (users[req.body.username]) {
+    //   await fs.unlink(path.join(__homeDir, req.file.path));
+    //   res
+    //     .status(401)
+    //     .json({ success: false, data: null, message: "User exists" });
+    // } else {
+    //   users[req.body.username] = {
+    //     username: req.body.username,
+    //     name: req.body.name,
+    //     image: req.body.image,
+    //   };
+    //   await fs.writeFile(pathUserJson, JSON.stringify(users));
+    //   res.status(201).json({
+    //     success: true,
+    //     data: users[req.body.username],
+    //     message: "User created",
+    //   });
+    // }
   });
 router
   .route("/users/:username")
@@ -84,7 +101,6 @@ router
   .put(upload.single("image"), async (req, res) => {
     const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
     const user = users[req.params.username];
-    // console.log("OK__3_post", users);
 
     if (user) {
       user.name = req.body.name;
@@ -114,8 +130,10 @@ router
 
 app.use(router);
 
-mongoose.connect("mongodb://192.168.99.100/nodejs").then(() =>
-  app.listen(3000, function () {
-    console.log("Ready");
-  })
-);
+mongoose
+  .connect("mongodb://nodejs:passw0rd@192.168.99.100:27017/nodejs")
+  .then(() =>
+    app.listen(3000, function () {
+      console.log("Ready");
+    })
+  );
