@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 global.__homeDir = __dirname;
 const User = require("./../../models/users");
+const { isNull } = require("util");
 
 app.use(cors());
 
@@ -20,20 +21,33 @@ const pathUserJson = path.join(__homeDir, "./users.json");
 router
   .route("/users")
   .get(cors(), async (req, res) => {
-    let users = Object.values(
-      JSON.parse(await fs.readFile(pathUserJson, "utf-8"))
-    );
+    // if we want to add params
+    const option = {};
+    const limitData = {};
 
     if (req.query.name) {
-      // did'n work
-      // const regEx = `/${req.query.name}/gi`;
-      // users = users.filter(({ name }) => !!name.match(regEx));
-      users = users.filter((user) => user.name.includes(req.query.name));
-    }
-    if (req.query.limit) {
-      users = users.slice(0, +req.query.limit);
+      option.name = req.query.name;
     }
 
+    if (req.query.limit) {
+      limitData.limit = Number(req.query.limit);
+    }
+
+    // const users = await User.find(option).limit(1); or limit take attribute
+    const users = await User.find(option, null, limitData);
+
+    // let users = Object.values(
+    //   JSON.parse(await fs.readFile(pathUserJson, "utf-8"))
+    // );
+    // if (req.query.name) {
+    //   // did'n work
+    //   // const regEx = `/${req.query.name}/gi`;
+    //   // users = users.filter(({ name }) => !!name.match(regEx));
+    //   users = users.filter((user) => user.name.includes(req.query.name));
+    // }
+    // if (req.query.limit) {
+    //   users = users.slice(0, +req.query.limit);
+    // }
     res.status(201).json({
       success: true,
       data: users,
@@ -42,19 +56,28 @@ router
   })
   .post(cors(), upload.single("image"), async (req, res) => {
     try {
-      const user = new User({
-        username: req.body.username,
-        name: req.body.name,
-        image: req.body.image,
-      });
+      if (await User.exists({ username: req.body.username })) {
+        throw new Error("User exists");
+      } else {
+        const user = new User({
+          username: req.body.username,
+          name: req.body.name,
+          image: req.body.image,
+        });
 
-      await user.save();
-      res.status(201).json({
-        success: true,
-        data: user,
-        message: "User created",
-      });
+        await user.save();
+        res.status(201).json({
+          success: true,
+          data: user,
+          message: "User created",
+        });
+      }
     } catch (error) {
+      res.status(401).json({
+        success: false,
+        data: null,
+        message: error.message,
+      });
       console.log(1111111, error);
     }
 
