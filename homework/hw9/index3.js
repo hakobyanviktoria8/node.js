@@ -182,13 +182,24 @@ router
     // }
   })
   .delete(async (req, res) => {
-    const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    delete users[req.params.id];
-    await fs.writeFile(pathUserJson, JSON.stringify(users));
+    const user = await User.findByIdAndRemove(req.params.id);
     res.status(202).json({
       success: true,
       message: `User data deleted`,
     });
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: `User not found!`,
+      });
+    }
+    // const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
+    // delete users[req.params.id];
+    // await fs.writeFile(pathUserJson, JSON.stringify(users));
+    // res.status(202).json({
+    //   success: true,
+    //   message: `User data deleted`,
+    // });
   });
 
 app.use(router);
