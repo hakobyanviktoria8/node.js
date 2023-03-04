@@ -103,14 +103,16 @@ router
     //   });
     // }
   });
+
 router
-  .route("/users/:username")
+  .route("/users/:id")
   .get(async (req, res) => {
-    const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    if (users[req.params.username]) {
+    const user = await User.findOne({ _id: req.params.id });
+
+    if (user) {
       res.status(202).json({
         success: true,
-        data: users[req.params.username],
+        data: user,
         message: "Get user data",
       });
     } else {
@@ -120,30 +122,68 @@ router
         message: "User not found",
       });
     }
+
+    // const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
+    // if (users[req.params.id]) {
+    //   res.status(202).json({
+    //     success: true,
+    //     data: users[req.params.id],
+    //     message: "Get user data",
+    //   });
+    // } else {
+    //   res.status(202).json({
+    //     success: false,
+    //     data: null,
+    //     message: "User not found",
+    //   });
+    // }
   })
   .put(upload.single("image"), async (req, res) => {
-    const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    const user = users[req.params.username];
+    try {
+      const user = await User.findById(req.params.id);
 
-    if (user) {
-      user.name = req.body.name;
-      await fs.unlink(path.join(`${__homeDir}/upload/`, user["image"]));
-      user.image = req.file.originalname;
-      await fs.writeFile(pathUserJson, JSON.stringify(users));
-      res.status(201).json({
-        success: true,
-        data: user,
-        message: "User data updated",
-      });
-    } else {
-      res
-        .status(401)
-        .json({ success: false, data: null, message: "User not found" });
+      if (user) {
+        await fs.unlink(path.join(`${__homeDir}/upload/`, user.image));
+        user.name = req.body.name;
+        user.image = req.file.originalname;
+        await user.save();
+
+        res.status(201).json({
+          success: true,
+          data: user,
+          message: "User data updated",
+        });
+      } else {
+        res
+          .status(401)
+          .json({ success: false, data: null, message: "User not found" });
+      }
+    } catch (error) {
+      console.log(error);
     }
+
+    // const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
+    // const user = users[req.params.id];
+
+    // if (user) {
+    //   user.name = req.body.name;
+    //   await fs.unlink(path.join(`${__homeDir}/upload/`, user["image"]));
+    //   user.image = req.file.originalname;
+    //   await fs.writeFile(pathUserJson, JSON.stringify(users));
+    //   res.status(201).json({
+    //     success: true,
+    //     data: user,
+    //     message: "User data updated",
+    //   });
+    // } else {
+    //   res
+    //     .status(401)
+    //     .json({ success: false, data: null, message: "User not found" });
+    // }
   })
   .delete(async (req, res) => {
     const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    delete users[req.params.username];
+    delete users[req.params.id];
     await fs.writeFile(pathUserJson, JSON.stringify(users));
     res.status(202).json({
       success: true,
