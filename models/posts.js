@@ -7,9 +7,9 @@ const PostSchema = new Schema(
   {
     title: String,
     description: String,
-    auther: { type: ObjectId, ref: "User" },
+    author: { type: ObjectId, ref: "User" },
   },
   { versionKey: false, timestamps: true }
 );
 
-module.exports = mongoose.model("Posts", PostsSchema);
+module.exports = mongoose.model("Posts", PostSchema);
