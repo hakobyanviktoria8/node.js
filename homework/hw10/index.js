@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Posts = require("./../../models/posts");
+const Users = require("./../../models/users");
 const router = express.Router();
 const cors = require("cors");
 
@@ -17,7 +18,7 @@ router
     // if we want more information
     const posts = await Posts.find().populate({
       path: "author",
-      select: "username name -_id",
+      select: "username name _id",
     });
     res.status(201).json({
       success: true,
@@ -26,17 +27,23 @@ router
     });
   })
   .post(async (req, res) => {
-    const post = await new Posts({
-      title: req.body.title,
-      description: req.body.description,
-      author: req.body.userId,
-    }).save();
+    // userId is a /posts POST property, and I acssess them
+    const user = await Users.findById(req.body.userId);
 
-    res.status(222).json({
-      success: true,
-      data: post,
-      message: "Create new post",
-    });
+    if (user) {
+      console.log(1111111, user);
+      const post = await new Posts({
+        title: req.body.title,
+        description: req.body.description,
+        author: user._id,
+      }).save();
+
+      res.status(222).json({
+        success: true,
+        data: post,
+        message: "Create new post",
+      });
+    }
   });
 
 router
