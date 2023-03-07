@@ -58,7 +58,17 @@ router
   .post(cors(), upload.single("image"), async (req, res) => {
     try {
       // use users controllers methods
-      await UsersCtrl.add(req, res);
+      const userData = await UsersCtrl.add({
+        username: req.body.username,
+        name: req.body.name,
+        image: req.body.image,
+      });
+
+      res.status(201).json({
+        success: true,
+        data: userData,
+        message: "User created",
+      });
     } catch (error) {
       // say user exist but added image, it isn't right work
       // const user = await User.findOne({ _id: req.params.id });
