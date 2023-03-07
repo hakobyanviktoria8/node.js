@@ -13,6 +13,7 @@ app.use(express.json());
 global.__homeDir = __dirname;
 const User = require("./../../models/users");
 const { isNull } = require("util");
+const UsersCtrl = require("../../controllers/users.ctrl");
 
 app.use(cors());
 
@@ -56,23 +57,13 @@ router
   })
   .post(cors(), upload.single("image"), async (req, res) => {
     try {
-      if (await User.exists({ username: req.body.username })) {
-        throw new Error("User exists");
-      } else {
-        const user = new User({
-          username: req.body.username,
-          name: req.body.name,
-          image: req.body.image,
-        });
-
-        await user.save();
-        res.status(201).json({
-          success: true,
-          data: user,
-          message: "User created",
-        });
-      }
+      // use users controllers methods
+      await UsersCtrl.add(req, res);
     } catch (error) {
+      // say user exist but added image, it isn't right work
+      // const user = await User.findOne({ _id: req.params.id });
+      // await fs.unlink(path.join(`${__homeDir}/upload/`, user.image));
+
       res.status(401).json({
         success: false,
         data: null,
