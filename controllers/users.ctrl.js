@@ -1,7 +1,10 @@
 const User = require("./../models/users");
 
 class UsersCtrl {
-  getById() {}
+  getById(id) {
+    console.log("UsersCtrl getById method call, user id - ", id);
+    return User.findById(id);
+  }
   getAll() {}
 
   // when we use req and res we concat controller to router.rout.POST....
@@ -28,7 +31,7 @@ class UsersCtrl {
 
   async add(data) {
     console.log("UsersCtrl add method call");
-    
+
     if (await User.exists({ username: data.username })) {
       throw new Error("User exists");
     } else {

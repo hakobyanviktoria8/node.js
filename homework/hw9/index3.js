@@ -108,7 +108,9 @@ router
 router
   .route("/users/:id")
   .get(async (req, res) => {
-    const user = await User.findOne({ _id: req.params.id });
+    // const user = await User.findOne({ _id: req.params.id });
+    // use UserController
+    const user = await UsersCtrl.getById(req.params.id);
 
     if (user) {
       res.status(202).json({
