@@ -14,6 +14,7 @@ global.__homeDir = __dirname;
 const User = require("./../../models/users");
 const { isNull } = require("util");
 const UsersCtrl = require("../../controllers/users.ctrl");
+const { body, validationResult } = require("express-validator");
 
 app.use(cors());
 
@@ -55,55 +56,66 @@ router
       message: "Return all users",
     });
   })
-  .post(cors(), upload.single("image"), async (req, res) => {
-    try {
-      // use users controllers methods
-      const userData = await UsersCtrl.add({
-        username: req.body.username,
-        name: req.body.name,
-        image: req.body.image,
-      });
+  .post(
+    cors(),
+    upload.single("image"),
+    // body("name").exists().isLength({ min: 6 }),
+    // if we want return first error write bail method
+    body("name").exists().bail().isLength({ min: 6 }),
+    async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      try {
+        // use users controllers methods
+        const userData = await UsersCtrl.add({
+          username: req.body.username,
+          name: req.body.name,
+          image: req.body.image,
+        });
 
-      res.status(201).json({
-        success: true,
-        data: userData,
-        message: "User created",
-      });
-    } catch (error) {
-      // say user exist but added image, it isn't right work
-      // const user = await User.findOne({ _id: req.params.id });
-      // await fs.unlink(path.join(`${__homeDir}/upload/`, user.image));
+        res.status(201).json({
+          success: true,
+          data: userData,
+          message: "User created",
+        });
+      } catch (error) {
+        // say user exist but added image, it isn't right work
+        // const user = await User.findOne({ _id: req.params.id });
+        // await fs.unlink(path.join(`${__homeDir}/upload/`, user.image));
 
-      res.status(401).json({
-        success: false,
-        data: null,
-        message: error.message,
-      });
-      console.log(1111111, error);
+        res.status(401).json({
+          success: false,
+          data: null,
+          message: error.message,
+        });
+        console.log(1111111, error);
+      }
+
+      // const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
+      // // console.log("OK__2_post",  users);
+
+      // if (users[req.body.username]) {
+      //   await fs.unlink(path.join(__homeDir, req.file.path));
+      //   res
+      //     .status(401)
+      //     .json({ success: false, data: null, message: "User exists" });
+      // } else {
+      //   users[req.body.username] = {
+      //     username: req.body.username,
+      //     name: req.body.name,
+      //     image: req.body.image,
+      //   };
+      //   await fs.writeFile(pathUserJson, JSON.stringify(users));
+      //   res.status(201).json({
+      //     success: true,
+      //     data: users[req.body.username],
+      //     message: "User created",
+      //   });
+      // }
     }
-
-    // const users = JSON.parse(await fs.readFile(pathUserJson, "utf-8"));
-    // // console.log("OK__2_post",  users);
-
-    // if (users[req.body.username]) {
-    //   await fs.unlink(path.join(__homeDir, req.file.path));
-    //   res
-    //     .status(401)
-    //     .json({ success: false, data: null, message: "User exists" });
-    // } else {
-    //   users[req.body.username] = {
-    //     username: req.body.username,
-    //     name: req.body.name,
-    //     image: req.body.image,
-    //   };
-    //   await fs.writeFile(pathUserJson, JSON.stringify(users));
-    //   res.status(201).json({
-    //     success: true,
-    //     data: users[req.body.username],
-    //     message: "User created",
-    //   });
-    // }
-  });
+  );
 
 router
   .route("/users/:id")
