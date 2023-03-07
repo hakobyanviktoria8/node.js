@@ -4,6 +4,8 @@ const Posts = require("./../../models/posts");
 const Users = require("./../../models/users");
 const router = express.Router();
 const cors = require("cors");
+const { body, validationResult, check } = require("express-validator");
+const { ObjectId } = require("mongoose").Types;
 
 const app = express();
 
@@ -26,25 +28,35 @@ router
       message: "Return all posts",
     });
   })
-  .post(async (req, res) => {
-    // userId is a /posts POST property, and I acssess them
-    const user = await Users.findById(req.body.userId);
+  .post(
+    body("userId").custom((value, { req, res }) => {
+      return ObjectId.isValid(value);
+    }),
+    check("title", "title exist").exists(),
+    async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.mapped() });
+      }
+      // userId is a /posts POST property, and I acssess them
+      const user = await Users.findById(req.body.userId);
 
-    if (user) {
-      console.log(1111111, user);
-      const post = await new Posts({
-        title: req.body.title,
-        description: req.body.description,
-        author: user._id,
-      }).save();
+      if (user) {
+        console.log(1111111, user);
+        const post = await new Posts({
+          title: req.body.title,
+          description: req.body.description,
+          author: user._id,
+        }).save();
 
-      res.status(222).json({
-        success: true,
-        data: post,
-        message: "Create new post",
-      });
+        res.status(222).json({
+          success: true,
+          data: post,
+          message: "Create new post",
+        });
+      }
     }
-  });
+  );
 
 router
   .route("/posts/:id")
