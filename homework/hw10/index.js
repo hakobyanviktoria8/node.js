@@ -39,14 +39,21 @@ router
 
     async (req, res) => {
       const responseHandler = ResponseManager.getResponseHandler(res);
-
+      const user = await Users.findById(req.body.userId);
+      
       try {
-        responseHandler.onSuccess(post, "Post new created", 222);
+        responseHandler.onSuccess(
+          {
+            title: req.body.title,
+            description: req.body.description,
+            author: user._id,
+          },
+          "Post new created",
+          222
+        );
       } catch (error) {
-        responseHandler.onError(error)
+        responseHandler.onError(error);
       }
-
-
 
       // const errors = validationResult(req);
       // if (!errors.isEmpty()) {

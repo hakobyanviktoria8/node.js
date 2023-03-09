@@ -21,7 +21,8 @@ class ResponseManager {
         ResponseManager.respondWithError(
           res,
           error.httpStatus || 500,
-          error.message || "Unknown error"
+          error.message || "Unknown error",
+          data
         );
       },
     };
@@ -39,7 +40,7 @@ class ResponseManager {
     let response = Object.assign({}, ResponseBase);
     response.success = false;
     response.message = message;
-    response.data = data;
+    response.errors = data;
     res.status(errorCode).json(response);
   }
 }
