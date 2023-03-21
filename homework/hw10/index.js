@@ -9,6 +9,7 @@ const { ObjectId } = require("mongoose").Types;
 const ResponseManager = require("./../../managers/response-manager");
 const AppError = require("./../../managers/app-error");
 const validationResult = require("./../../managers/validation-result");
+const responseHandle = require("../../middlewares/responseHandle");
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
@@ -31,6 +32,7 @@ router
     });
   })
   .post(
+    responseHandle,
     body("userId").custom((value, { req, res }) => {
       return ObjectId.isValid(value);
     }),
@@ -38,21 +40,23 @@ router
     validationResult,
 
     async (req, res) => {
-      const responseHandler = ResponseManager.getResponseHandler(res);
-      const user = await Users.findById(req.body.userId);
-      
+      // const responseHandler = ResponseManager.getResponseHandler(res);
+      // const user = await Users.findById(req.body.userId);
+
       try {
-        responseHandler.onSuccess(
-          {
-            title: req.body.title,
-            description: req.body.description,
-            author: user._id,
-          },
-          "Post new created",
-          222
-        );
+        res.onSuccess({}, "Post Created!!!!");
+        // responseHandler.onSuccess(
+        //   {
+        //     title: req.body.title,
+        //     description: req.body.description,
+        //     author: user._id,
+        //   },
+        //   "Post new created",
+        //   222
+        // );
       } catch (error) {
-        responseHandler.onError(error);
+        // responseHandler.onError(error);
+        res.onError(error);
       }
 
       // const errors = validationResult(req);
